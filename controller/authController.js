@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const catchError = require("../utility/catch");
+const { promisify } = require("util");
 const bcrypt = require("bcryptjs");
 const appError = require("../utility/appError");
 const jwt = require("jsonwebtoken");
@@ -57,17 +58,44 @@ const login = catchError(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    data: user,
     token: token,
   });
 });
 
 const protect = catchError(async (req, res, next) => {
   // 1) Token bor yuqligini headerdan tekshirish
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
   // 2 tokenni tekshirish
+
+  const decode = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  console.log(decode);
+
+  //   3 User bor yuqligini db dan tekshirish
+  const currentUser = await User.findById(decode.id);
+
+  if (!currentUser) {
+    return next(new appError("User not found", 401));
+  }
+
+  // 4) parol almashganini tekshirish
+
+  if (currentUser.changedPasswordAfter(decode.iat)) {
+    return next(
+      new appError("User password has been changed. Please log in again", 401)
+    );
+  }
+
+  next();
 });
 
 module.exports = {
   signUp,
   login,
+  protect,
 };

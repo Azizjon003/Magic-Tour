@@ -71,6 +71,13 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
+UserSchema.methods.modifyiedPasswordAfter = function (jwtExpiresIn) {
+  if (this.passwordChangeDate) {
+    const pass = this.passwordChangeDate.getTime() / 1000;
+    return jwtExpiresIn < pass;
+  }
+  return false;
+};
 
 const User = mongoose.model("Users", UserSchema);
 

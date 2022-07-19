@@ -1,7 +1,7 @@
 const express = require("express");
 const obj = require("../controller/tourController");
 const TourRouter = express.Router();
-
+const Auth = require("../controller/authController");
 // TourRouter.param("id", obj.chekId);
 
 TourRouter.use(
@@ -15,7 +15,7 @@ TourRouter.use(
 );
 TourRouter.route("/stats").get(obj.tourStats);
 TourRouter.route("/report").get(obj.tourReportYear);
-TourRouter.route("/").get(obj.getAllTours).post(obj.addTour);
+TourRouter.route("/").get(Auth.protect, obj.getAllTours).post(obj.addTour);
 TourRouter.route("/:id")
   .get(obj.getIdTour)
   .patch(obj.updateTour)
