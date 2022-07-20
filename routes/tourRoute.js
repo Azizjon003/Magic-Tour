@@ -19,6 +19,6 @@ TourRouter.route("/").get(Auth.protect, obj.getAllTours).post(obj.addTour);
 TourRouter.route("/:id")
   .get(obj.getIdTour)
   .patch(obj.updateTour)
-  .delete(obj.deleteTour);
+  .delete(Auth.protect, Auth.roleTo, obj.deleteTour);
 
 module.exports = TourRouter;

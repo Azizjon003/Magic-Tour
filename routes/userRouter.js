@@ -5,6 +5,8 @@ const userRoute = express.Router();
 
 userRoute.route("/signup").post(auth.signUp);
 userRoute.route("/signin").post(auth.login);
+userRoute.route("/forgotpasword").post(auth.forgotPassword);
+userRoute.route("/resetpassword/:token").patch(auth.resetPassword);
 // userRoute.route("/forgotpassword").post(auth.forgotpassword);
 userRoute.route("/").get(obj.getAllUsers).post(obj.addUser);
 userRoute

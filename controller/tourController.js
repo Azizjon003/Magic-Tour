@@ -9,7 +9,7 @@ const getAllTours = catchFunct(async (req, res) => {
     .field()
     .sorting()
     .pagination();
- 
+
   const tours = await query.databaseQuery;
   // next();
   res
@@ -48,9 +48,10 @@ const getIdTour = catchFunct(async (req, res) => {
   res.status(200).json({ status: "success", data: obj });
 });
 
-const deleteTour = catchFunct(async (req, res) => {
-  const obj = await Tours.findByIdByAndDelete(req.params.id);
-  res.status(200).json({ status: "success", data: obj });
+const deleteTour = catchFunct(async (req, res, next) => {
+  console.log(req.params);
+  const obj = await Tours.findByIdAndRemove(req.params.id);
+  res.status(204).json({ status: "success" });
 });
 
 const tourStats = catchFunct(async (req, res) => {
